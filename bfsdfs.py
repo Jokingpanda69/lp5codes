@@ -27,21 +27,16 @@ def dfs(graph,node,visited=None,result=None):
     return result
 
 if __name__ == "__main__":
-    n = int(input("Enter number of edges: "))
     graph = defaultdict(set)
-    for _ in range(n):
-        u, v = input("Enter edge (u v): ").split()
+    for _ in range(int(input("Number of edges: "))):
+        u, v = input("Edge (u v): ").split()
         graph[u].add(v)
         graph[v].add(u)
 
-    start = input("Enter starting node: ")
+    start = input("Starting node: ")
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        bfs_future = executor.submit(bfs, graph, start)
-        dfs_future = executor.submit(dfs, graph, start)
-
-        bfs_result = bfs_future.result()
-        dfs_result = dfs_future.result()
+        bfs_result, dfs_result = executor.map(lambda f: f(graph, start), [bfs, dfs])
 
     print("\nBFS Traversal:", ' -> '.join(bfs_result))
     print("DFS Traversal:", ' -> '.join(dfs_result))
